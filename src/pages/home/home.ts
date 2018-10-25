@@ -14,9 +14,12 @@ export class HomePage {
   add:any;
   interval:any;
   duration:any;
-  callNum:any;
+  lastNum:any;
+  ADD:any;
+  
 
   constructor(public navCtrl: NavController,private alertCtrl: AlertController, public http:Http) {
+    this.readNum();
     var dur = 1;
     this.interval = setInterval(()=>{
         dur = dur +1;
@@ -30,13 +33,12 @@ export class HomePage {
   readNum(){
       let params: URLSearchParams = new URLSearchParams();
       params.set('robNo', "R001");
-      this.http.get('http://140.131.114.143/project/data/readNum.php', {search: params})			
+      this.http.get('http://140.131.114.143/project/data/readLastNum.php', {search: params})			
         .subscribe(
           (data) => {
-            this.num=data.json()['numplate'];
-            console.log(this.num);
-            this.callNum = String(Number(this.num)+1);
-            console.log(this.callNum);
+            this.lastNum=data.json()['numplate'];
+            this.add= String(Number(this.lastNum)+1);
+            console.log('當前要抽'+this.add);
           }, error => {
               this.showAlert();
           }
@@ -46,15 +48,15 @@ export class HomePage {
 //新增號碼------------------------------------------------------------
   addNum(){
     let params = new FormData();
-    params.append('numplate', this.callNum);
+    params.append('numplate', this.add);
     params.append('numTime', '');
     params.append('robNo', 'R001');
-    params.append('callState', '0');
+    params.append('callState', '1');
     params.append('handleState', '1');
     this.http.post('http://140.131.114.143/project/data/addNumPlate.php',params)
     .subscribe(data => {
-        this.add=data.json();
-        console.log(this.add);
+        this.ADD=data.json()['data'];
+        console.log(this.ADD);
       }, error => {
         this.showAlert();
       }
@@ -64,8 +66,8 @@ export class HomePage {
 //抽取號碼------------------------------------------------------------
   cutHair(){
     let alert = this.alertCtrl.create({
-      title: '剪髮確認',
-      message: '您是'+ this.callNum + '號',
+      title: '抽號確認',
+      message: '您是'+ this.add + '號',
       buttons: [
         {
           text: '取消',
@@ -78,7 +80,6 @@ export class HomePage {
           text: '確認',
           handler: () => {
             this.addNum();
-            console.log('OK');
           }
         }
       ]
