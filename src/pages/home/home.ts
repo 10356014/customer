@@ -33,7 +33,7 @@ export class HomePage {
   readNum(){
       let params: URLSearchParams = new URLSearchParams();
       params.set('robNo', "R001");
-      this.http.get('http://140.131.114.143/project/data/readLastNum.php', {search: params})			
+      this.http.get('http://140.131.114.143:8080/project/data/readLastNum.php', {search: params})			
         .subscribe(
           (data) => {
             this.lastNum=data.json()['numplate'];
@@ -53,7 +53,7 @@ export class HomePage {
     params.append('robNo', 'R001');
     params.append('callState', '1');
     params.append('handleState', '1');
-    this.http.post('http://140.131.114.143/project/data/addNumPlate.php',params)
+    this.http.post('http://140.131.114.143:8080/project/data/addNumPlate.php',params)
     .subscribe(data => {
         this.ADD=data.json()['data'];
         console.log(this.ADD);
